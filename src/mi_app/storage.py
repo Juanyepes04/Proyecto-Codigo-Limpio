@@ -1,122 +1,73 @@
 import json
 from pathlib import Path
-from typing import Any, Dict, List, Optional
-from datetime import datetime
-
-from mi_app.models import Vehiculo, Cliente, Alquiler 
+from typing import List
+from mi_app.models import Vehiculo, Cliente, Alquiler
 
 DATABASE_PATH = Path("data/database.json")
 
-class DatabaseManager:
-    """
-    Maneja la lectura y escritura del archivo database.json.
-    """
 
-    def _leer_db(self) -> Dict[str, Any]:
-        """Lee el archivo JSON y retorna su contenido."""
-        if not DATABASE_PATH.exists():
-            return {"vehiculos": [], "clientes": [], "alquileres": []}
+class BaseStorage:
+    def _leer_db(self):
+        with open(DATABASE_PATH, "r") as f:
+            return json.load(f)
 
-        with open(DATABASE_PATH, "r", encoding="utf-8") as file:
-            return json.load(file)
+    def _guardar_db(self, data):
+        with open(DATABASE_PATH, "w") as f:
+            json.dump(data, f, indent=4)
 
-    def _guardar_db(self, data: Dict[str, Any]) -> None:
-        """Guarda el contenido completo en el archivo JSON."""
-        with open(DATABASE_PATH, "w", encoding="utf-8") as file:
-            json.dump(data, file, indent=4)
 
-class VehiculoStorage:
-    """Responsable de persistir vehículos."""
+class VehiculoStorage(BaseStorage):
+    def obtener_todos(self) -> List[Vehiculo]:
+        data = self._leer_db()
+        return [Vehiculo(**v) for v in data["vehiculos"]]
 
-    def guardar(self, vehiculo: Vehiculo) -> None:
+    def guardar(self, vehiculo: Vehiculo):
         data = self._leer_db()
         data["vehiculos"].append(vehiculo.__dict__)
         self._guardar_db(data)
 
-    def obtener_por_id(self, vehiculo_id: int) -> Optional[Vehiculo]:
+    def actualizar(self, vehiculo: Vehiculo):
         data = self._leer_db()
-        for item in data["vehiculos"]:
-            if item["id"] == vehiculo_id:
-                return Vehiculo(**item)
-        return None
+        for i, v in enumerate(data["vehiculos"]):
+            if v["id"] == vehiculo.id:
+                data["vehiculos"][i] = vehiculo.__dict__
+                break
+        self._guardar_db(data)
 
-    def obtener_todos(self) -> List[Vehiculo]:
+
+class ClienteStorage(BaseStorage):
+    def obtener_todos(self) -> List[Cliente]:
         data = self._leer_db()
-        return [Vehiculo(**item) for item in data["vehiculos"]]
+        return [Cliente(**c) for c in data["clientes"]]
 
-class ClienteStorage:
-    """Responsable de persistir clientes."""
-
-    def guardar(self, cliente: Cliente) -> None:
+    def guardar(self, cliente: Cliente):
         data = self._leer_db()
         data["clientes"].append(cliente.__dict__)
         self._guardar_db(data)
 
-    def obtener_por_id(self, cliente_id: int) -> Optional[Cliente]:
+    def actualizar(self, cliente: Cliente):
         data = self._leer_db()
-        for item in data["clientes"]:
-            if item["id"] == cliente_id:
-                return Cliente(**item)
-        return None
-
-
-    def obtener_todos(self) -> List[Cliente]:
-        data = self._leer_db()
-        return [Cliente(**item) for item in data["clientes"]]
-
-
-
-class AlquilerStorage:
-    """Responsable de persistir alquileres."""
-
-    def guardar(self, alquiler: Alquiler) -> None:
-        data = self._leer_db()
-
-        alquiler_dict = {
-            **alquiler.__dict__,
-            "fecha_inicio": alquiler.fecha_inicio.isoformat(),
-            "fecha_fin": alquiler.fecha_fin.isoformat()
-            if alquiler.fecha_fin
-            else None,
-        }
-
-        data["alquileres"].append(alquiler_dict)
+        for i, c in enumerate(data["clientes"]):
+            if c["id"] == cliente.id:
+                data["clientes"][i] = cliente.__dict__
+                break
         self._guardar_db(data)
 
-    def obtener_por_id(self, alquiler_id: int) -> Optional[Alquiler]:
-        data = self._leer_db()
 
-        for item in data["alquileres"]:
-            if item["id"] == alquiler_id:
-                return Alquiler(
-                    id=item["id"],
-                    cliente_id=item["cliente_id"],
-                    vehiculo_id=item["vehiculo_id"],
-                    fecha_inicio=datetime.fromisoformat(item["fecha_inicio"]),
-                    fecha_fin=datetime.fromisoformat(item["fecha_fin"])
-                    if item["fecha_fin"]
-                    else None,
-                    activo=item["activo"],
-                )
-        return None
-
+class AlquilerStorage(BaseStorage):
     def obtener_todos(self) -> List[Alquiler]:
         data = self._leer_db()
+        return [Alquiler(**a) for a in data["alquileres"]]
 
-        alquileres: List[Alquiler] = []
+    def guardar(self, alquiler: Alquiler):
+        data = self._leer_db()
+        data["alquileres"].append(alquiler.__dict__)
+        self._guardar_db(data)
 
-        for item in data["alquileres"]:
-            alquileres.append(
-                Alquiler(
-                    id=item["id"],
-                    cliente_id=item["cliente_id"],
-                    vehiculo_id=item["vehiculo_id"],
-                    fecha_inicio=datetime.fromisoformat(item["fecha_inicio"]),
-                    fecha_fin=datetime.fromisoformat(item["fecha_fin"])
-                    if item["fecha_fin"]
-                    else None,
-                    activo=item["activo"],
-                )
-            )
-
-        return alquileres
+    def actualizar(self, alquiler: Alquiler):
+        data = self._leer_db()
+        for i, a in enumerate(data["alquileres"]):
+            if a["id"] == alquiler.id:
+                data["alquileres"][i] = alquiler.__dict__
+                break
+        self._guardar_db(data)
