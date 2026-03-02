@@ -11,7 +11,7 @@ class Vehiculo:
     id: int
     marca: str
     modelo: str
-    año: int
+    anio: int
     color: str
     placa: str
     disponible: bool
@@ -28,7 +28,6 @@ class Cliente:
     nombre: str
     telefono: str
     email: str
-    direccion : str 
     activo: bool
 
 @dataclass
