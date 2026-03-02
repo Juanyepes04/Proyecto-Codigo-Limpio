@@ -109,3 +109,48 @@ class AlquilerService:
         self._alquiler_storage = alquiler_storage
         self._cliente_storage = cliente_storage
         self._vehiculo_storage = vehiculo_storage
+
+    
+    def crear_alquiler(self, cliente_id: int, vehiculo_id: int) -> Alquiler:
+        """
+        Crea un alquiler si se cumplen todas las reglas del negocio.
+
+        :raises ElementoNoEncontradoError:
+        :raises ClienteInactivoError:
+        :raises VehiculoNoDisponibleError:
+        :raises ClienteConAlquilerActivoError:
+        """
+
+        cliente = self._cliente_storage.obtener_por_id(cliente_id)
+        if not cliente:
+            raise ElementoNoEncontradoError("Cliente no encontrado.")
+
+        if not cliente.activo:
+            raise ClienteInactivoError("El cliente no está activo.")
+
+        vehiculo = self._vehiculo_storage.obtener_por_id(vehiculo_id)
+        if not vehiculo:
+            raise ElementoNoEncontradoError("Vehículo no encontrado.")
+
+        if not vehiculo.disponible:
+            raise VehiculoNoDisponibleError(
+                "El vehículo no está disponible."
+            )
+
+        alquileres = self._alquiler_storage.obtener_todos()
+        for alquiler in alquileres:
+            if alquiler.cliente_id == cliente_id and alquiler.activo:
+                raise ClienteConAlquilerActivoError(
+                    "El cliente ya tiene un alquiler activo."
+                )
+
+        nuevo_id = len(alquileres) + 1
+
+        alquiler = Alquiler(
+            id=nuevo_id,
+            cliente_id=cliente_id,
+            vehiculo_id=vehiculo_id,
+            fecha_inicio=datetime.now(),
+            fecha_fin=None,
+            activo=True,
+        )
