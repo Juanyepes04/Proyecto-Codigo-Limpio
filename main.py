@@ -3,9 +3,9 @@ from rich.console import Console
 from rich.table import Table
 from functools import wraps
 
-from mi_app.storage import VehiculoStorage, ClienteStorage, AlquilerStorage
-from mi_app.services import VehiculoService, ClienteService, AlquilerService
-from mi_app.exceptions import RentSystemException
+from src.mi_app.storage import VehiculoStorage, ClienteStorage, AlquilerStorage
+from src.mi_app.services import VehiculoService, ClienteService, AlquilerService
+from src.mi_app.exceptions import RentSystemException
 
 app = typer.Typer()
 console = Console()
