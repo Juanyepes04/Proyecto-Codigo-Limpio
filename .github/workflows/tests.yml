@@ -21,7 +21,7 @@ jobs:
       - name: Run ruff
         run: uv run ruff check .
 
-site_name: Alquiler De Vehiculos
+site_name: User management project
 theme:
   name: material
   palette:
