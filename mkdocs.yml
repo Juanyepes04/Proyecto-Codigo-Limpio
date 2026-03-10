@@ -17,13 +17,12 @@ site_name: Sistema De Alquiler De Vehiculos
 pluggins:
   - search:
   - mkdocstrings:
-    handlers:
-      python:
-        paths: ["src"]
+      handlers:
+        python:
+          paths: ["src"]
 
 nav:
-  - Inicio: index.md
-  - Referencias: api.md
+  - Inicio: index.md 
 
 markdown_extensions:
   - admonition
