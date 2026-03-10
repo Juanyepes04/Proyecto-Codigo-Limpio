@@ -1,5 +1,4 @@
-site_name: User management project
-theme:
+site_name: Sistema De Alquiler De Vehiculos
   name: material
   palette:
     - scheme: default
