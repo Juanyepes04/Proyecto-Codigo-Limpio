@@ -1,46 +1,75 @@
-# Sistema de Alquiler de Vehículos
+# 🚗 RentaCar
 
-# Descripción
+## Descripción
 
-Este proyecto implementa un sistema de gestión de alquiler de vehículos mediante una **interfaz de línea de comandos (CLI)**. Permite registrar clientes, vehículos y gestionar alquileres de forma sencilla.
+RentaCar es un sistema de gestión de alquiler de vehículos desarrollado utilizando una arquitectura cliente-servidor.
 
-El sistema fue desarrollado aplicando principios de **código limpio**, separación de responsabilidades y buenas prácticas en Python.
+El sistema permite administrar clientes, vehículos y alquileres mediante una interfaz web intuitiva desarrollada con Streamlit y respaldada por una API REST construida con FastAPI.
 
----
-
-# Características principales
-
-* Registro de clientes y vehículos
-* Gestión de alquileres
-* Persistencia de datos en archivos JSON
-* Validaciones en modelos
-* Arquitectura modular por capas
+Toda la información es almacenada en Supabase utilizando PostgreSQL como motor de base de datos.
 
 ---
 
-# Arquitectura del sistema
+## Características principales
 
-El sistema está dividido en tres capas principales:
+* Gestión de clientes.
+* Gestión de vehículos.
+* Gestión de alquileres.
+* Consulta de vehículos disponibles.
+* API REST documentada automáticamente.
+* Interfaz web amigable para administradores.
 
-* **CLI** → Interacción con el usuario
-* **Servicios** → Lógica del negocio
-* **Storage** → Manejo de datos
+---
 
-mermaid
+## Arquitectura del sistema
+
+El sistema está dividido en varias capas para garantizar una correcta separación de responsabilidades:
+
+* **Frontend (Streamlit)** → Interfaz de usuario.
+* **API (FastAPI)** → Gestión de endpoints y reglas de negocio.
+* **Schemas (Pydantic)** → Validación de datos.
+* **Storage (Supabase)** → Persistencia de datos.
+* **PostgreSQL** → Almacenamiento de información.
+
+### Flujo General
+
+```mermaid
 flowchart LR
-CLI --> Service
-Service --> Storage
-Storage --> JSON
 
+A[Usuario] --> B[Streamlit]
+
+B --> C[FastAPI]
+
+C --> D[Supabase]
+
+D --> E[(PostgreSQL)]
+```
 
 ---
 
-# Objetivo del proyecto
+## Objetivo del Proyecto
 
-Aplicar buenas prácticas de desarrollo como:
+Desarrollar un sistema de gestión de alquiler de vehículos aplicando buenas prácticas de ingeniería de software:
 
-* Código limpio
-* Uso de dataclasses
-* Validaciones automáticas
-* Separación de capas
+* Arquitectura por capas.
+* Separación de responsabilidades.
+* Validación de datos con Pydantic.
+* Persistencia en PostgreSQL.
+* Consumo de API REST.
+* Pruebas automatizadas con Pytest.
+* Documentación técnica con MkDocs.
+
+---
+
+## Tecnologías Utilizadas
+
+| Tecnología | Uso                |
+| ---------- | ------------------ |
+| Python     | Lenguaje principal |
+| FastAPI    | Backend            |
+| Streamlit  | Frontend           |
+| Supabase   | Base de datos      |
+| PostgreSQL | Persistencia       |
+| Pytest     | Pruebas            |
+| MkDocs     | Documentación      |
 

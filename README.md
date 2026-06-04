@@ -1,223 +1,271 @@
-Sistema de Alquiler de Vehículos
+# 🚗 RentaCar
 
-1. Descripción del Proyecto
+## Integrantes
 
-El Sistema de Alquiler de Vehículos es una aplicación de línea de comandos (CLI) desarrollada en Python que permite gestionar el proceso completo de alquiler de vehículos.
+* Juan Diego Yepes Valencia
+* Jhon Lizarazo
+* Jhon Garavito
 
-El sistema permite:
+---
 
-Registrar vehículos
+# Descripción del Proyecto
 
-Registrar clientes
+RentaCar es un sistema de gestión de alquiler de vehículos desarrollado bajo una arquitectura cliente-servidor utilizando FastAPI para el backend, Streamlit para el frontend y Supabase (PostgreSQL) como sistema de almacenamiento de datos.
 
-Crear alquileres
+El sistema permite administrar clientes, vehículos y alquileres de manera centralizada, facilitando el control de disponibilidad de vehículos y el seguimiento de las operaciones de alquiler.
 
-Devolver vehículos
+---
 
-Consultar vehículos disponibles
+# Objetivos
 
-El proyecto fue desarrollado aplicando una arquitectura por capas estricta, separando responsabilidades en:
+* Gestionar clientes registrados.
+* Gestionar vehículos disponibles para alquiler.
+* Registrar y controlar alquileres.
+* Validar reglas de negocio para garantizar la integridad de la información.
+* Implementar una arquitectura organizada y escalable.
 
-Models → Definición pura de datos usando @dataclass
+---
 
-Storage → Persistencia en archivo JSON (única capa que puede leer/escribir)
+# Tecnologías Utilizadas
 
-Services → Reglas de negocio y validaciones
+## Backend
 
-CLI → Interfaz de usuario usando Typer + Rich
+* Python 3.12
+* FastAPI
+* Pydantic
 
-Tests → Pruebas unitarias con pytest
+## Frontend
 
-2. Propósito
+* Streamlit
+* Pandas
+* Requests
 
-El propósito del proyecto es demostrar:
+## Base de Datos
 
--Separación clara de responsabilidades
--Aplicación de reglas de negocio
--Uso de excepciones personalizadas
--Persistencia en archivos JSON
--Pruebas unitarias robustas
--Buenas prácticas de código (type hinting, docstrings, ruff)
+* Supabase
+* PostgreSQL
 
-3. Cómo funciona el sistema
-* Models
+## Testing
 
-Contiene las dataclasses:
+* Pytest
 
-Vehiculo
+## Documentación
 
-Cliente
+* MkDocs
 
-Alquiler
+---
 
-Estas clases solo representan datos.
-No contienen lógica de negocio.
+# Arquitectura del Proyecto
 
-* Storage
+El proyecto está organizado en capas para separar responsabilidades:
 
-Encargado exclusivamente de:
+```text
+src
+│
+├── api
+│   ├── main.py
+│   └── routers
+│
+├── app
+│   ├── main.py
+│   └── pages
+│
+├── schemas
+│
+├── services
+│
+└── storage
+```
 
-Leer el archivo database.json
+### API
 
-Escribir en database.json
+Contiene los endpoints REST desarrollados con FastAPI.
 
-Convertir objetos ↔ JSON
+### App
 
-No valida reglas de negocio.
+Contiene la interfaz gráfica desarrollada con Streamlit.
 
-* Services
+### Schemas
 
-Aquí vive la lógica principal:
+Modelos de validación implementados con Pydantic.
 
-Reglas implementadas:
+### Services
 
- No se puede alquilar si el vehículo no está disponible
+Capa destinada a la lógica de negocio.
 
- No se puede alquilar si el cliente está inactivo
+### Storage
 
- No se puede alquilar si el cliente ya tiene un alquiler activo
+Gestiona la conexión con Supabase.
 
- No se puede devolver un alquiler ya finalizado
+---
 
- No se puede operar con IDs inexistentes
+# Modelo de Datos
 
-* CLI
+El sistema está compuesto por tres entidades principales:
 
-Interfaz construida con:
+## Cliente
 
-Typer → Comandos
+* id
+* nombre
+* telefono
+* email
+* activo
 
-Rich → Colores y tablas
+## Vehículo
 
-Permite interactuar con el sistema desde la terminal.
+* id
+* marca
+* modelo
+* anio
+* color
+* placa
+* disponible
+* precio_por_dia
 
-4. Guía de Instalación
+## Alquiler
 
-* Requisitos
+* id
+* cliente_id
+* vehiculo_id
+* fecha_inicio
+* fecha_fin
+* total
+* activo
 
-Python 3.12+
-uv instalado
+Relaciones:
 
-* Paso 1 — Clonar repositorio
+* Un cliente puede tener varios alquileres.
+* Un vehículo puede participar en varios alquileres.
+* Un alquiler pertenece a un único cliente y a un único vehículo.
 
-git clone <url-del-repositorio>
-cd nombre-del-proyecto
-Paso 2 — Instalar dependencias
-uv sync
+---
 
-Esto crea el entorno virtual automáticamente.
+# Funcionalidades
 
-5. Manual de Uso (CLI)
+## Gestión de Clientes
 
-Todos los comandos se ejecutan así:
+* Crear cliente.
+* Consultar clientes.
+* Actualizar cliente.
+* Eliminar cliente.
 
-uv run python main.py <comando>
+## Gestión de Vehículos
 
- -Crear un Vehículo
-uv run python main.py crear-vehiculo Toyota Corolla 2020 Rojo ABC123 120
+* Crear vehículo.
+* Consultar vehículos.
+* Consultar vehículos disponibles.
+* Actualizar vehículo.
+* Eliminar vehículo.
 
-Parámetros:
+## Gestión de Alquileres
 
-Marca
+* Crear alquiler.
+* Consultar alquileres.
+* Actualizar alquiler.
+* Eliminar alquiler.
+* Cálculo automático del valor total del alquiler.
 
-Modelo
+---
 
-Año
+# Reglas de Negocio
 
-Color
+El sistema implementa las siguientes validaciones:
 
-Placa
+* El cliente debe existir para registrar un alquiler.
+* El vehículo debe existir para registrar un alquiler.
+* El vehículo debe estar disponible.
+* La fecha final no puede ser menor que la fecha inicial.
+* Al eliminar un alquiler, el vehículo vuelve a estar disponible.
+* El valor total del alquiler se calcula automáticamente según los días de alquiler y el precio por día del vehículo.
 
-Precio por día
+---
 
-Resultado:
+# Instalación
 
-Se crea el vehículo como disponible automáticamente.
+## Clonar el repositorio
 
-- Crear un Cliente
-uv run python main.py crear-cliente Juan 123456 juan@test.com
+```bash
+git clone https://github.com/Juanyepes04/Proyecto-Codigo-Limpio.git
+cd Proyecto-Codigo-Limpio
+```
 
-El cliente queda activo automáticamente.
+## Crear entorno virtual
 
-- Listar Vehículos
+```bash
+python -m venv .venv
+```
 
-uv run python main.py listar-vehiculos
+## Activar entorno virtual
 
-Muestra una tabla con:
+Linux / WSL:
 
-ID
+```bash
+source .venv/bin/activate
+```
 
-Marca
+Windows:
 
-Modelo
+```bash
+.venv\Scripts\activate
+```
 
-Disponibilidad
+## Instalar dependencias
 
-- Crear un Alquiler
-uv run python main.py alquilar 1 1
+```bash
+pip install -r requirements.txt
+```
 
-Parámetros:
+---
 
-ID del cliente
+# Variables de Entorno
 
-ID del vehículo
+Configurar las credenciales de Supabase:
 
-Reglas que se validan:
+```env
+SUPABASE_URL=tu_url
+SUPABASE_KEY=tu_key
+```
 
-Cliente debe existir
+---
 
-Vehículo debe existir
+# Ejecución del Backend
 
-Cliente debe estar activo
+```bash
+uvicorn src.api.main:app --reload
+```
 
-Vehículo debe estar disponible
+Documentación Swagger:
 
-Cliente no puede tener otro alquiler activo
+```text
+http://127.0.0.1:8000/docs
+```
 
-Si todo es correcto:
+Documentación ReDoc:
 
-Se crea el alquiler
+```text
+http://127.0.0.1:8000/redoc
+```
 
-El vehículo cambia a no disponible
+---
 
-- Devolver un Vehículo
+# Ejecución del Frontend
 
-uv run python main.py devolver 1
+```bash
+streamlit run src/app/main.py
+```
 
-Parámetro:
+---
 
-ID del alquiler
+# Pruebas
 
-Al devolver:
+Ejecutar pruebas automáticas:
 
-El alquiler se marca como inactivo
+```bash
+pytest
+```
 
-Se registra la fecha de devolución
+---
 
-El vehículo vuelve a estar disponible
+# Resultados Esperados
 
-6. Pruebas Unitarias
-
-El proyecto incluye pruebas automáticas con pytest.
-
-Para ejecutarlas:
-
-uv run pytest
-
-Las pruebas cubren:
-
-Creación correcta de vehículos
-
-Creación correcta de clientes
-
-Creación de alquiler válido
-
-Intentos inválidos (errores)
-
-Devoluciones
-
-Reglas de negocio
-
-Excepciones personalizadas
-
-Todas deben pasar correctamente.
+El sistema permite administrar integralmente el proceso de alquiler de vehículos mediante una interfaz web intuitiva conectada a una API REST y respaldada por una base de datos PostgreSQL en Supabase.
