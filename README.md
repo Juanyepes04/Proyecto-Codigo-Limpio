@@ -49,33 +49,9 @@ El sistema permite administrar clientes, vehículos y alquileres de manera centr
 
 * Pytest
 
-## Documentación
-
-* MkDocs
 
 ---
 
-# Arquitectura del Proyecto
-
-El proyecto está organizado en capas para separar responsabilidades:
-
-```text
-src
-│
-├── api
-│   ├── main.py
-│   └── routers
-│
-├── app
-│   ├── main.py
-│   └── pages
-│
-├── schemas
-│
-├── services
-│
-└── storage
-```
 
 ### API
 
@@ -209,13 +185,6 @@ Windows:
 .venv\Scripts\activate
 ```
 
-## Instalar dependencias
-
-```bash
-pip install -r requirements.txt
-```
-
----
 
 # Variables de Entorno
 
@@ -233,20 +202,6 @@ SUPABASE_KEY=tu_key
 ```bash
 uvicorn src.api.main:app --reload
 ```
-
-Documentación Swagger:
-
-```text
-http://127.0.0.1:8000/docs
-```
-
-Documentación ReDoc:
-
-```text
-http://127.0.0.1:8000/redoc
-```
-
----
 
 # Ejecución del Frontend
 
